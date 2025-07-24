@@ -1,0 +1,28 @@
+{
+  "name": "shared-tar-gz",
+  "version": "1.0.0",
+  "description": "Aplicação para compartilhar arquivos tar.gz através de URLs aleatórias",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.0",
+    "path": "^0.12.7",
+    "fs": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "file-sharing",
+    "tar.gz",
+    "express",
+    "download"
+  ],
+  "author": "Diego",
+  "license": "MIT"
+}
