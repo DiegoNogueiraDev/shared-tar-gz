@@ -44,6 +44,45 @@
             opacity: 0.9;
         }
 
+        .security-indicators {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .security-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .security-info {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .security-info h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .security-info ul {
+            color: #0c5460;
+            margin-left: 20px;
+        }
+
+        .security-info li {
+            margin-bottom: 5px;
+        }
+
         .content {
             padding: 40px;
         }
@@ -163,6 +202,31 @@
             margin-top: 5px;
         }
 
+        .file-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+        }
+
+        .file-details p {
+            margin: 8px 0;
+        }
+
+        .security-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .security-warning p {
+            margin: 5px 0;
+            color: #856404;
+        }
+
         .file-actions {
             display: flex;
             gap: 10px;
@@ -184,6 +248,17 @@
         .remove-btn {
             background: #dc3545;
             color: white;
+        }
+
+        .file-item.expired {
+            opacity: 0.6;
+            background: #f8f9fa;
+        }
+
+        .expired-text {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 14px;
         }
 
         .loading {
@@ -210,11 +285,30 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📦 Compartilhar TAR.GZ</h1>
-            <p>Compartilhe arquivos .tar.gz através de URLs aleatórias</p>
+            <h1>🔒 Compartilhar TAR.GZ Seguro</h1>
+            <p>Compartilhe arquivos .tar.gz com segurança aprimorada e criptografia</p>
+            <div class="security-indicators">
+                <span class="security-badge">🔐 Criptografia</span>
+                <span class="security-badge">🛡️ Rate Limiting</span>
+                <span class="security-badge">🔑 Tokens JWT</span>
+                <span class="security-badge">📊 Logs de Acesso</span>
+            </div>
         </div>
         
         <div class="content">
+            <div class="security-info">
+                <h4>🔒 Recursos de Segurança Ativos</h4>
+                <ul>
+                    <li><strong>Porta Aleatória:</strong> Cada inicialização usa uma porta entre 20000-65535</li>
+                    <li><strong>Tokens Seguros:</strong> Links protegidos por JWT com expiração</li>
+                    <li><strong>Rate Limiting:</strong> Proteção contra ataques de força bruta</li>
+                    <li><strong>Criptografia:</strong> Arquivos criptografados durante a transferência</li>
+                    <li><strong>Limite de Downloads:</strong> Máximo de downloads por arquivo configurável</li>
+                    <li><strong>Arquivos Grandes:</strong> Suporte para arquivos até 50GB (configurável)</li>
+                    <li><strong>Logs de Acesso:</strong> Monitoramento de todas as atividades</li>
+                </ul>
+            </div>
+
             <form id="shareForm">
                 <div class="form-group">
                     <label for="filePath">Caminho do arquivo .tar.gz:</label>
@@ -222,13 +316,13 @@
                         type="text" 
                         id="filePath" 
                         name="filePath" 
-                        placeholder="/caminho/para/seu/arquivo.tar.gz"
+                        placeholder="/caminho/para/seu/arquivo.tar.gz (até 50GB)"
                         required
                     >
                 </div>
                 
                 <button type="submit" class="btn">
-                    🔗 Gerar Link de Compartilhamento
+                    🔐 Gerar Link Seguro de Compartilhamento
                 </button>
             </form>
 
@@ -268,14 +362,25 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    const fileSizeMB = (data.fileSize / 1024 / 1024).toFixed(2);
                     resultContent.innerHTML = `
-                        <h3>✅ Link gerado com sucesso!</h3>
-                        <p><strong>Arquivo:</strong> ${data.fileName}</p>
+                        <h3>✅ Link seguro gerado com sucesso!</h3>
+                        <div class="file-details">
+                            <p><strong>📁 Arquivo:</strong> ${data.fileName}</p>
+                            <p><strong>📏 Tamanho:</strong> ${fileSizeMB} MB</p>
+                            <p><strong>🔐 Criptografado:</strong> ${data.encrypted ? 'Sim' : 'Não'}</p>
+                            <p><strong>⬇️ Downloads máximos:</strong> ${data.maxDownloads}</p>
+                            <p><strong>⏰ Expira em:</strong> ${data.expiresIn}</p>
+                        </div>
                         <div class="url-container">
                             <div class="share-url" id="shareUrl">${data.shareUrl}</div>
                             <button class="copy-btn" onclick="copyToClipboard('shareUrl')">
-                                📋 Copiar Link
+                                📋 Copiar Link Seguro
                             </button>
+                        </div>
+                        <div class="security-warning">
+                            <p><strong>⚠️ Aviso de Segurança:</strong></p>
+                            <p>Este link contém um token de acesso seguro. Compartilhe apenas com pessoas autorizadas.</p>
                         </div>
                     `;
                     resultDiv.className = 'result';
@@ -332,29 +437,38 @@
                 if (files.length === 0) {
                     filesList.innerHTML = '<p style="text-align: center; color: #666;">Nenhum arquivo compartilhado</p>';
                 } else {
-                    filesList.innerHTML = files.map(file => `
-                        <div class="file-item">
+                    filesList.innerHTML = files.map(file => {
+                        const fileSizeMB = (file.fileSize / 1024 / 1024).toFixed(2);
+                        const statusIcon = file.status === 'expired' ? '🔴' : '🟢';
+                        const statusText = file.status === 'expired' ? 'Expirado' : 'Ativo';
+                        return `
+                        <div class="file-item ${file.status === 'expired' ? 'expired' : ''}">
                             <div class="file-info">
-                                <div class="file-name">${file.fileName}</div>
+                                <div class="file-name">${statusIcon} ${file.fileName}</div>
                                 <div class="file-meta">
-                                    Criado: ${new Date(file.createdAt).toLocaleString('pt-BR')} | 
-                                    Downloads: ${file.downloads}
+                                    📅 Criado: ${new Date(file.createdAt).toLocaleString('pt-BR')}<br>
+                                    ⬇️ Downloads: ${file.downloads}/${file.maxDownloads} | 
+                                    📏 ${fileSizeMB} MB | 
+                                    🔐 ${file.encrypted ? 'Criptografado' : 'Sem criptografia'}<br>
+                                    📊 Status: ${statusText}
                                 </div>
                             </div>
                             <div class="file-actions">
+                                ${file.status !== 'expired' ? `
                                 <button class="action-btn download-btn" onclick="window.open('${file.shareUrl}', '_blank')">
-                                    ⬇️ Download
+                                    🔐 Download Seguro
                                 </button>
                                 <button class="action-btn copy-btn" onclick="copyToClipboard('url-${file.id}')">
-                                    📋 Copiar
+                                    📋 Copiar Link
                                 </button>
+                                ` : '<span class="expired-text">Link expirado</span>'}
                                 <button class="action-btn remove-btn" onclick="removeFile('${file.id}')">
                                     🗑️ Remover
                                 </button>
                                 <div id="url-${file.id}" style="display: none;">${file.shareUrl}</div>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 }
             } catch (error) {
                 filesList.innerHTML = '<p style="text-align: center; color: #dc3545;">Erro ao carregar arquivos</p>';

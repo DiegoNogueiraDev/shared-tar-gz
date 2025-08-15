@@ -1,120 +1,207 @@
-# Shared TAR.GZ
+# 🔒 Shared TAR.GZ - Secure File Sharing
 
-Aplicação Node.js para compartilhar arquivos .tar.gz através de URLs aleatórias na rede local.
+Advanced Node.js application for secure sharing of .tar.gz files with enhanced security features, random ports, and large file support.
 
-## 🚀 Funcionalidades
+## 🚀 Key Features
 
-- ✅ Interface web intuitiva para compartilhar arquivos
-- ✅ Geração de URLs aleatórias para cada arquivo
-- ✅ Download seguro através de links únicos
-- ✅ Listagem de arquivos compartilhados
-- ✅ Contador de downloads
-- ✅ Remoção de arquivos da lista de compartilhamento
-- ✅ Validação de arquivos .tar.gz
-- ✅ Design responsivo
+### 🛡️ Security Features
+- **🎲 Random Port Generation**: Uses cryptographically secure random ports (20000-65535)
+- **🔐 JWT Authentication**: Token-based access control for all downloads
+- **🔒 AES-256 Encryption**: Optional file encryption during transfer
+- **🛡️ Rate Limiting**: Protection against brute force attacks (100 req/15min, 5 downloads/min)
+- **🔍 Access Logging**: Complete monitoring with IP tracking and timestamps
+- **🚫 IP Whitelisting**: Optional IP restriction support
+- **⛑️ Security Headers**: Helmet.js implementation with CSP protection
 
-## 📋 Pré-requisitos
+### 📁 File Management
+- **📦 Large File Support**: Up to 50GB per file (configurable)
+- **✅ .tar.gz Validation**: Strict file type enforcement
+- **📊 Download Limits**: Configurable maximum downloads per file
+- **⏰ Token Expiration**: Automatic link expiration (24h default)
+- **🗑️ Auto Cleanup**: Automatic removal when limits exceeded
 
-- Node.js (versão 14 ou superior)
-- npm ou yarn
+### 🎨 Enhanced Interface
+- **📱 Responsive Design**: Modern, mobile-friendly interface
+- **🔍 Security Indicators**: Real-time security status display
+- **📈 File Analytics**: Size, download count, and encryption status
+- **⚠️ Security Warnings**: User-friendly security notifications
 
-## 🛠️ Instalação
+## 📋 Prerequisites
 
-1. Navegue até o diretório do projeto:
+- Node.js (version 14 or higher)
+- npm or yarn
+
+## 🛠️ Installation
+
+1. Clone the repository:
 ```bash
-cd /home/diego/Documentos/shared-tar-gz
+git clone <repository-url>
+cd shared-tar-gz
 ```
 
-2. Instale as dependências:
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-## 🏃 Execução
+## 🏃 Quick Start
 
-### Modo de produção:
+### Production Mode
 ```bash
 npm start
 ```
 
-### Modo de desenvolvimento (com auto-reload):
+### Development Mode (with auto-reload)
 ```bash
 npm run dev
 ```
 
-O servidor será iniciado em `http://localhost:3000`
+The server will start on a **random port between 20000-65535**. Check the console output for the assigned port.
 
-## 📖 Como usar
+## ⚙️ Configuration
 
-1. Acesse `http://localhost:3000` no navegador
-2. Digite o caminho completo para um arquivo .tar.gz
-3. Clique em "Gerar Link de Compartilhamento"
-4. Copie o link gerado e compartilhe com outros usuários na rede
-5. Os usuários podem acessar o link para fazer o download do arquivo
+Configure the application using environment variables:
 
-## 🌐 Acesso na rede
-
-Para permitir acesso de outros computadores na rede, você pode:
-
-1. **Descobrir seu IP local:**
 ```bash
-ip addr show
+# Security Configuration
+ENABLE_HTTPS=true                    # Enable HTTPS (requires SSL certificates)
+JWT_SECRET=your_secure_secret        # Custom JWT secret key
+TOKEN_EXPIRY=24h                     # Token expiration time
+MAX_DOWNLOADS=10                     # Maximum downloads per file
+ENABLE_ENCRYPTION=true               # Enable file encryption
+
+# File Configuration
+MAX_FILE_SIZE=53687091200           # Maximum file size in bytes (50GB)
+
+# Access Control
+WHITELISTED_IPS=192.168.1.100,192.168.1.101  # Comma-separated allowed IPs
 ```
 
-2. **Iniciar o servidor especificando o host:**
+### File Size Examples
 ```bash
-PORT=3000 node server.js
-```
+# 10GB limit
+MAX_FILE_SIZE=10737418240
 
-3. **Outros computadores podem acessar via:**
-```
-http://[SEU_IP]:3000
-```
+# 50GB limit (default)
+MAX_FILE_SIZE=53687091200
 
-## 📁 Estrutura do projeto
-
-```
-shared-tar-gz/
-├── server.js          # Servidor Express principal
-├── package.json       # Configurações do projeto
-├── README.md          # Este arquivo
-└── public/
-    └── index.html     # Interface web
+# 100GB limit
+MAX_FILE_SIZE=107374182400
 ```
 
 ## 🔧 API Endpoints
 
-- `GET /` - Interface web principal
-- `POST /share` - Compartilhar um arquivo
-- `GET /download/:fileId` - Download do arquivo
-- `GET /files` - Listar arquivos compartilhados
-- `DELETE /files/:fileId` - Remover arquivo da lista
+### File Sharing
+- `POST /share` - Create secure share link with JWT token
+- `GET /download/:fileId?token=jwt` - Download with token verification
+- `GET /files` - List files with security status
+- `DELETE /files/:fileId` - Remove file from sharing list
 
-## 🛡️ Segurança
+### Security Features
+- Rate limiting on all endpoints
+- JWT token validation for downloads
+- IP whitelisting (if configured)
+- Comprehensive access logging
 
-- Apenas arquivos .tar.gz são aceitos
-- URLs são geradas com UUIDs aleatórios
-- Validação de existência de arquivos
-- Não há persistência de dados (reiniciar o servidor limpa a lista)
+## 🌐 Network Access
 
-## 📝 Exemplo de uso
-
+### Local Access
 ```bash
-# 1. Instalar dependências
-npm install
-
-# 2. Iniciar servidor
-npm start
-
-# 3. Acessar http://localhost:3000
-# 4. Inserir caminho: /home/usuario/arquivo.tar.gz
-# 5. Compartilhar o link gerado
+http://localhost:[RANDOM_PORT]
 ```
 
-## 🤝 Contribuição
+### Network Access
+1. Check console output for the assigned port
+2. Find your local IP:
+```bash
+ip addr show
+```
+3. Share with network users:
+```bash
+http://[YOUR_IP]:[RANDOM_PORT]
+```
 
-Sinta-se à vontade para contribuir com melhorias!
+## 📖 Usage
 
-## 📄 Licença
+1. **Start the server** using `npm start`
+2. **Note the random port** displayed in the console
+3. **Access the web interface** at `http://localhost:[PORT]`
+4. **Enter the full path** to your .tar.gz file
+5. **Generate a secure link** with built-in token authentication
+6. **Share the secure URL** with authorized users
+7. **Monitor downloads** through the web interface
 
-MIT License
+## 🔒 Security Best Practices
+
+- **Random Ports**: Each restart uses a new random port for security
+- **Token Protection**: Never share tokens separately from URLs
+- **File Validation**: Only .tar.gz files are accepted
+- **Size Limits**: Configure appropriate file size limits
+- **IP Restrictions**: Use IP whitelisting in sensitive environments
+- **Monitor Logs**: Check console output for security events
+- **Regular Restarts**: Restart server to clear shared file cache
+
+## 📁 Project Structure
+
+```
+shared-tar-gz/
+├── server.js              # Main secure server with all features
+├── package.json           # Dependencies and security packages
+├── CLAUDE.md              # Development guidance
+├── README.md              # This file
+└── public/
+    └── index.html         # Enhanced security-aware frontend
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+- **Port conflicts**: New random port is assigned automatically
+- **Rate limiting**: Wait 15 minutes if hitting rate limits
+- **Token errors**: Links expire after configured time (default 24h)
+- **Large files**: Monitor console for upload progress
+- **File not found**: Check if download limit was exceeded
+
+### Debug Information
+- Current port saved to `.port` file
+- All security events logged to console
+- Failed access attempts tracked and logged
+
+## 🔄 Development
+
+### Security Dependencies
+- `helmet` - Security headers
+- `express-rate-limit` - Rate limiting
+- `jsonwebtoken` - JWT authentication
+- `bcryptjs` - Password hashing utilities
+
+### Development Commands
+```bash
+npm run dev     # Development with auto-reload
+npm start       # Production mode
+```
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Implement security-focused changes
+4. Add comprehensive tests
+5. Submit a pull request
+
+## 🔐 Security Notice
+
+This application implements multiple security layers but should be used responsibly:
+- Only share files with trusted parties
+- Use IP whitelisting in corporate environments
+- Monitor access logs regularly
+- Keep the application updated
+- Use HTTPS in production environments
+
+---
+
+**🚀 Ready to share files securely with enhanced protection!**
