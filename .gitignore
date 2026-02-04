@@ -44,3 +44,20 @@ build/
 
 # PM2
 .pm2/
+
+# Uploads (arquivos temporarios do servidor)
+uploads/
+
+# Arquivos de teste
+test_upload.txt
+test_upload.tar.gz
+*.enc
+
+# Porta do servidor (dinamica)
+.port
+
+# Serena MCP
+.serena/
+
+# Playwright MCP
+.playwright-mcp/

@@ -8,8 +8,47 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const multer = require('multer');
 
 const app = express();
+
+// ============================================================================
+// FILE UPLOAD CONFIGURATION
+// Configuração para upload de arquivos via interface web
+// ============================================================================
+const UPLOAD_DIR = path.join(__dirname, 'uploads');
+
+// Criar diretório de uploads se não existir
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+// Configurar multer para uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, UPLOAD_DIR);
+    },
+    filename: (req, file, cb) => {
+        // Gerar nome único para evitar conflitos
+        const uniqueName = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}-${file.originalname}`;
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: process.env.MAX_FILE_SIZE ? parseInt(process.env.MAX_FILE_SIZE) : 50 * 1024 * 1024 * 1024 // 50GB
+    },
+    fileFilter: (req, file, cb) => {
+        // Aceitar apenas arquivos .tar.gz
+        if (file.originalname.toLowerCase().endsWith('.tar.gz')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Apenas arquivos .tar.gz são permitidos'), false);
+        }
+    }
+});
 
 // ============================================================================
 // STEALTH MODE CONFIGURATION
@@ -85,6 +124,7 @@ app.use(helmet({
             defaultSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
             scriptSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrcAttr: ["'unsafe-inline'"],
             imgSrc: ["'self'", "data:"],
         },
     },
@@ -292,7 +332,57 @@ app.get('/', (req, res) => {
 });
 
 // ============================================================================
-// SECURE FILE SHARING ENDPOINT
+// FILE UPLOAD ENDPOINT
+// Upload de arquivo via interface web (drag & drop ou seleção)
+// ============================================================================
+app.post('/upload', upload.single('file'), async (req, res) => {
+    await addTimingJitter();
+
+    if (!req.file) {
+        return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+    }
+
+    const filePath = req.file.path;
+    const fileName = req.file.originalname;
+    const fileSize = req.file.size;
+
+    // Gerar ID único com entropia extra
+    const fileId = uuidv4() + '-' + crypto.randomBytes(8).toString('hex');
+    const encryptionKey = crypto.randomBytes(64).toString('hex');
+    const secureToken = generateSecureToken(fileId, crypto.randomBytes(16).toString('hex'));
+
+    // Armazenar informações do arquivo
+    sharedFiles.set(fileId, {
+        originalPath: filePath,
+        fileName: CONFIG.stealthMode ? `file_${crypto.randomBytes(4).toString('hex')}.tar.gz` : fileName,
+        createdAt: CONFIG.stealthMode ? null : new Date(),
+        downloads: 0,
+        maxDownloads: CONFIG.maxDownloads,
+        token: secureToken,
+        encryptionKey: encryptionKey,
+        fileSize: fileSize,
+        isUploaded: true // Marca que foi upload (para limpeza posterior)
+    });
+
+    const protocol = CONFIG.enableHttps ? 'https' : req.protocol;
+    const shareUrl = `${protocol}://${req.get('host')}/download/${fileId}?token=${secureToken}`;
+
+    stealthLog(`📤 Arquivo uploaded: ${fileId.substring(0, 8)}...`);
+
+    const response = {
+        success: true,
+        shareUrl: shareUrl,
+        fileId: fileId,
+        fileName: fileName,
+        fileSize: fileSize,
+        encrypted: CONFIG.enableEncryption
+    };
+
+    res.json(response);
+});
+
+// ============================================================================
+// SECURE FILE SHARING ENDPOINT (path-based - mantido para compatibilidade)
 // Compartilhamento seguro com criptografia e anonimato
 // ============================================================================
 app.post('/share', async (req, res) => {

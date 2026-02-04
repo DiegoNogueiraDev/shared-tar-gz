@@ -42,7 +42,6 @@
         .header h1 {
             font-size: 2.2em;
             margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .header p {
@@ -79,88 +78,105 @@
             50% { opacity: 0.7; }
         }
 
-        .security-info {
-            background: rgba(0, 255, 136, 0.05);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .security-info h4 {
-            color: #00ff88;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-
-        .security-info ul {
-            color: #b0b0b0;
-            margin-left: 20px;
-        }
-
-        .security-info li {
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-
-        .security-info strong {
-            color: #e0e0e0;
-        }
-
         .content {
             padding: 40px;
         }
 
-        .form-group {
-            margin-bottom: 25px;
+        /* Upload Area Styles */
+        .upload-area {
+            border: 3px dashed rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 255, 136, 0.02);
+            margin-bottom: 30px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #b0b0b0;
+        .upload-area:hover {
+            border-color: rgba(0, 255, 136, 0.6);
+            background: rgba(0, 255, 136, 0.05);
         }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            font-size: 16px;
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            transition: all 0.3s;
-        }
-
-        input[type="text"]::placeholder {
-            color: #666;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
+        .upload-area.dragover {
             border-color: #00ff88;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+            background: rgba(0, 255, 136, 0.1);
+            transform: scale(1.02);
         }
 
-        .btn {
+        .upload-area.uploading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.3em;
+            color: #b0b0b0;
+            margin-bottom: 15px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
             background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
             color: #1a1a2e;
-            padding: 15px 30px;
+            padding: 15px 40px;
             border: none;
             border-radius: 10px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            width: 100%;
+            display: inline-block;
         }
 
-        .btn:hover {
+        .upload-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
         }
 
+        #fileInput {
+            display: none;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00cc6a);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #00ff88;
+        }
+
+        /* Result Styles */
         .result {
             margin-top: 30px;
             padding: 25px;
@@ -184,10 +200,6 @@
             color: #ff4444;
         }
 
-        .url-container {
-            margin-top: 15px;
-        }
-
         .share-url {
             background: rgba(0,0,0,0.4);
             padding: 15px;
@@ -195,7 +207,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             font-family: 'Consolas', monospace;
             word-break: break-all;
-            margin-bottom: 15px;
+            margin: 15px 0;
             color: #00ff88;
             font-size: 0.9em;
         }
@@ -203,7 +215,7 @@
         .copy-btn {
             background: #00cc6a;
             color: #1a1a2e;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -216,6 +228,20 @@
             background: #00ff88;
         }
 
+        .file-info {
+            background: rgba(0, 136, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0088ff;
+        }
+
+        .file-info p {
+            margin: 8px 0;
+            color: #b0b0b0;
+        }
+
+        /* Files Section */
         .files-section {
             margin-top: 40px;
             border-top: 1px solid rgba(255,255,255,0.1);
@@ -225,6 +251,23 @@
         .files-section h2 {
             color: #e0e0e0;
             margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #1a1a2e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
         }
 
         .files-list {
@@ -244,49 +287,16 @@
             gap: 15px;
         }
 
-        .file-info {
-            flex-grow: 1;
-            min-width: 200px;
-        }
-
-        .file-name {
+        .file-item .file-name {
             font-weight: 600;
             color: #e0e0e0;
             font-size: 1.1em;
         }
 
-        .file-meta {
+        .file-item .file-meta {
             font-size: 13px;
             color: #888;
             margin-top: 8px;
-            line-height: 1.6;
-        }
-
-        .file-details {
-            background: rgba(0, 136, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #0088ff;
-        }
-
-        .file-details p {
-            margin: 8px 0;
-            color: #b0b0b0;
-        }
-
-        .security-warning {
-            background: rgba(255, 193, 7, 0.1);
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .security-warning p {
-            margin: 5px 0;
-            color: #ffc107;
-            font-size: 0.9em;
         }
 
         .file-actions {
@@ -310,28 +320,10 @@
             color: white;
         }
 
-        .download-btn:hover {
-            background: #0099ff;
-        }
-
         .remove-btn {
             background: rgba(255, 68, 68, 0.2);
             color: #ff4444;
             border: 1px solid rgba(255, 68, 68, 0.3);
-        }
-
-        .remove-btn:hover {
-            background: rgba(255, 68, 68, 0.3);
-        }
-
-        .file-item.expired {
-            opacity: 0.5;
-        }
-
-        .expired-text {
-            color: #ff4444;
-            font-weight: bold;
-            font-size: 13px;
         }
 
         .loading {
@@ -341,121 +333,61 @@
             padding: 20px;
         }
 
-        .decrypt-info {
-            background: rgba(138, 43, 226, 0.1);
-            border: 1px solid rgba(138, 43, 226, 0.3);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .decrypt-info h4 {
-            color: #d8b4fe;
-            margin-bottom: 10px;
-        }
-
-        .decrypt-info code {
-            background: rgba(0,0,0,0.3);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'Consolas', monospace;
-            color: #00ff88;
-        }
-
-        .decrypt-info p {
-            color: #b0b0b0;
-            margin: 8px 0;
-            line-height: 1.6;
+        .file-item.expired {
+            opacity: 0.5;
         }
 
         @media (max-width: 600px) {
-            .container {
-                margin: 10px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            .file-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .file-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
+            .header h1 { font-size: 1.8em; }
+            .content { padding: 20px; }
+            .upload-area { padding: 40px 20px; }
+            .upload-icon { font-size: 3em; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>👻 Secure File Share</h1>
+            <h1>Secure File Share</h1>
             <p>Compartilhamento seguro e anônimo de arquivos .tar.gz</p>
             <div class="security-indicators">
-                <span class="security-badge stealth-mode">👻 Modo Stealth</span>
-                <span class="security-badge">🔐 AES-256-GCM</span>
-                <span class="security-badge">🛡️ Anti-Fingerprint</span>
-                <span class="security-badge">🔑 JWT Auth</span>
-                <span class="security-badge">📊 Anti-Análise</span>
+                <span class="security-badge stealth-mode">Modo Stealth</span>
+                <span class="security-badge">Token JWT</span>
+                <span class="security-badge">Anti-Fingerprint</span>
+                <span class="security-badge">Rate Limiting</span>
             </div>
         </div>
 
         <div class="content">
-            <div class="security-info">
-                <h4>🔒 Recursos de Segurança e Anonimato</h4>
-                <ul>
-                    <li><strong>Modo Stealth:</strong> Nenhum log de IP, timestamps ou metadados identificáveis</li>
-                    <li><strong>Anti-Fingerprinting:</strong> Headers genéricos que impedem identificação do servidor</li>
-                    <li><strong>Criptografia AES-256-GCM:</strong> Autenticada com PBKDF2 para derivação de chaves</li>
-                    <li><strong>Padding Anti-Análise:</strong> Dados aleatórios adicionados para impedir análise de tráfego</li>
-                    <li><strong>Timing Jitter:</strong> Delays aleatórios para prevenir ataques de timing</li>
-                    <li><strong>Porta Aleatória:</strong> Cada inicialização usa porta entre 20000-65535</li>
-                    <li><strong>Tokens Seguros:</strong> JWT com expiração e rate limiting</li>
-                    <li><strong>Arquivos Grandes:</strong> Suporte para arquivos até 50GB</li>
-                </ul>
+            <!-- Upload Area -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Arraste seu arquivo .tar.gz aqui</div>
+                <div class="upload-subtext">ou</div>
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    Selecionar Arquivo
+                </button>
+                <input type="file" id="fileInput" accept=".tar.gz,.tgz">
+                <div class="upload-subtext" style="margin-top: 20px;">Suporta arquivos até 50GB</div>
+
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Enviando...</div>
+                </div>
             </div>
 
-            <form id="shareForm">
-                <div class="form-group">
-                    <label for="filePath">Caminho do arquivo .tar.gz:</label>
-                    <input
-                        type="text"
-                        id="filePath"
-                        name="filePath"
-                        placeholder="/caminho/para/arquivo.tar.gz"
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-
-                <button type="submit" class="btn">
-                    🔐 Gerar Link Seguro
-                </button>
-            </form>
-
+            <!-- Result -->
             <div id="result" class="result">
                 <div id="resultContent"></div>
             </div>
 
-            <div class="decrypt-info">
-                <h4>🔓 Como descriptografar arquivos</h4>
-                <p>Os arquivos baixados são criptografados. Para descriptografar:</p>
-                <p>1. Baixe o script: <a href="/decrypt.js" style="color: #00ff88;">decrypt.js</a></p>
-                <p>2. Execute: <code>node decrypt.js arquivo.enc CHAVE</code></p>
-                <p>3. A chave está no header <code>X-Secure-Bundle</code> ou <code>X-Decryption-Key</code> do download</p>
-            </div>
-
+            <!-- Files Section -->
             <div class="files-section">
-                <h2>📋 Arquivos Compartilhados</h2>
-                <button onclick="loadFiles()" class="btn" style="width: auto; margin-bottom: 20px; padding: 10px 20px;">
-                    🔄 Atualizar Lista
+                <h2>Arquivos Compartilhados</h2>
+                <button onclick="loadFiles()" class="btn" style="margin-bottom: 20px;">
+                    Atualizar Lista
                 </button>
 
                 <div class="loading" id="loading">Carregando...</div>
@@ -465,93 +397,155 @@
     </div>
 
     <script>
-        document.getElementById('shareForm').addEventListener('submit', async function(e) {
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('resultContent');
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-
-            const filePath = document.getElementById('filePath').value;
-            const resultDiv = document.getElementById('result');
-            const resultContent = document.getElementById('resultContent');
-
-            try {
-                const response = await fetch('/share', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ filePath })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Handle stealth mode (minimal info) vs normal mode
-                    let detailsHtml = '';
-                    if (data.fileName) {
-                        const fileSizeMB = data.fileSize ? (data.fileSize / 1024 / 1024).toFixed(2) : 'N/A';
-                        detailsHtml = `
-                            <div class="file-details">
-                                <p><strong>📁 Arquivo:</strong> ${data.fileName}</p>
-                                <p><strong>📏 Tamanho:</strong> ${fileSizeMB} MB</p>
-                                <p><strong>🔐 Criptografado:</strong> ${data.encrypted ? 'Sim (AES-256-GCM)' : 'Não'}</p>
-                                ${data.maxDownloads ? `<p><strong>⬇️ Downloads máximos:</strong> ${data.maxDownloads}</p>` : ''}
-                                ${data.expiresIn ? `<p><strong>⏰ Expira em:</strong> ${data.expiresIn}</p>` : ''}
-                            </div>
-                        `;
-                    } else {
-                        detailsHtml = `
-                            <div class="file-details">
-                                <p><strong>🔐 Criptografado:</strong> ${data.encrypted ? 'Sim (AES-256-GCM)' : 'Não'}</p>
-                                <p><strong>👻 Modo Stealth:</strong> Metadados ocultos</p>
-                            </div>
-                        `;
-                    }
-
-                    resultContent.innerHTML = `
-                        <h3>✅ Link seguro gerado!</h3>
-                        ${detailsHtml}
-                        <div class="url-container">
-                            <div class="share-url" id="shareUrl">${data.shareUrl}</div>
-                            <button class="copy-btn" onclick="copyToClipboard('shareUrl')">
-                                📋 Copiar Link
-                            </button>
-                        </div>
-                        <div class="security-warning">
-                            <p><strong>⚠️ Importante:</strong></p>
-                            <p>Este link contém um token de acesso. Compartilhe apenas com pessoas autorizadas.</p>
-                            <p>O arquivo está criptografado - guarde a chave de descriptografia!</p>
-                        </div>
-                    `;
-                    resultDiv.className = 'result';
-
-                    document.getElementById('filePath').value = '';
-                    loadFiles();
-                } else {
-                    throw new Error(data.error || 'Erro desconhecido');
-                }
-            } catch (error) {
-                resultContent.innerHTML = `
-                    <h3>❌ Erro</h3>
-                    <p style="color: #ff6b6b;">${error.message}</p>
-                `;
-                resultDiv.className = 'result error';
-            }
-
-            resultDiv.style.display = 'block';
+            uploadArea.classList.add('dragover');
         });
 
-        function copyToClipboard(elementId) {
-            const element = document.getElementById(elementId);
-            const text = element.textContent;
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
 
-            navigator.clipboard.writeText(text).then(function() {
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Handle file upload
+        function handleFile(file) {
+            // Validate file type
+            if (!file.name.toLowerCase().endsWith('.tar.gz') && !file.name.toLowerCase().endsWith('.tgz')) {
+                showError('Apenas arquivos .tar.gz são permitidos');
+                return;
+            }
+
+            uploadFile(file);
+        }
+
+        // Upload file with progress
+        async function uploadFile(file) {
+            uploadArea.classList.add('uploading');
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = 'Preparando upload...';
+            resultDiv.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressFill.style.width = percent + '%';
+                    const loaded = formatSize(e.loaded);
+                    const total = formatSize(e.total);
+                    progressText.textContent = `Enviando: ${loaded} / ${total} (${percent}%)`;
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                uploadArea.classList.remove('uploading');
+                progressContainer.style.display = 'none';
+                fileInput.value = '';
+
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.success) {
+                        showSuccess(data);
+                        loadFiles();
+                    } else {
+                        showError(data.error || 'Erro no upload');
+                    }
+                } else {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        showError(data.error || 'Erro no upload');
+                    } catch {
+                        showError('Erro no upload');
+                    }
+                }
+            });
+
+            xhr.addEventListener('error', () => {
+                uploadArea.classList.remove('uploading');
+                progressContainer.style.display = 'none';
+                showError('Erro de conexão');
+            });
+
+            xhr.open('POST', '/upload');
+            xhr.send(formData);
+        }
+
+        function formatSize(bytes) {
+            if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(2) + ' GB';
+            if (bytes >= 1048576) return (bytes / 1048576).toFixed(2) + ' MB';
+            if (bytes >= 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return bytes + ' bytes';
+        }
+
+        function showSuccess(data) {
+            resultContent.innerHTML = `
+                <h3>Link gerado com sucesso!</h3>
+                <div class="file-info">
+                    <p><strong>Arquivo:</strong> ${data.fileName}</p>
+                    <p><strong>Tamanho:</strong> ${formatSize(data.fileSize)}</p>
+                </div>
+                <div class="share-url" id="shareUrl">${data.shareUrl}</div>
+                <button class="copy-btn" onclick="copyToClipboard()">
+                    Copiar Link
+                </button>
+                <p style="margin-top: 15px; color: #ffc107; font-size: 0.9em;">
+                    Compartilhe este link apenas com pessoas autorizadas.
+                </p>
+            `;
+            resultDiv.className = 'result';
+            resultDiv.style.display = 'block';
+        }
+
+        function showError(message) {
+            resultContent.innerHTML = `
+                <h3>Erro</h3>
+                <p style="color: #ff6b6b;">${message}</p>
+            `;
+            resultDiv.className = 'result error';
+            resultDiv.style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            const url = document.getElementById('shareUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
                 alert('Link copiado!');
-            }).catch(function() {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                document.body.appendChild(textarea);
+                textarea.select();
                 document.execCommand('copy');
-                document.body.removeChild(textArea);
+                document.body.removeChild(textarea);
                 alert('Link copiado!');
             });
         }
@@ -574,40 +568,27 @@
                         const statusIcon = file.status === 'expired' ? '🔴' : '🟢';
                         const statusText = file.status === 'expired' ? 'Expirado' : 'Ativo';
 
-                        // Handle stealth mode vs normal mode display
-                        let metaHtml = '';
-                        if (file.fileName) {
-                            const fileSizeMB = file.fileSize ? (file.fileSize / 1024 / 1024).toFixed(2) : 'N/A';
-                            metaHtml = `
-                                📅 ${file.createdAt ? new Date(file.createdAt).toLocaleString('pt-BR') : 'N/A'}<br>
-                                ⬇️ Downloads: ${file.downloads}/${file.maxDownloads} |
-                                📏 ${fileSizeMB} MB |
-                            `;
-                        } else {
-                            metaHtml = `⬇️ Downloads: ${file.downloads}/${file.maxDownloads} | `;
-                        }
-
                         return `
                         <div class="file-item ${file.status === 'expired' ? 'expired' : ''}">
-                            <div class="file-info">
-                                <div class="file-name">${statusIcon} ${file.fileName || 'Arquivo (stealth)'}</div>
+                            <div style="flex-grow: 1;">
+                                <div class="file-name">${statusIcon} ${file.fileName || 'Arquivo'}</div>
                                 <div class="file-meta">
-                                    ${metaHtml}
-                                    🔐 ${file.encrypted ? 'AES-256-GCM' : 'Sem criptografia'} |
-                                    📊 ${statusText}
+                                    Downloads: ${file.downloads}/${file.maxDownloads} |
+                                    ${file.fileSize ? formatSize(file.fileSize) + ' | ' : ''}
+                                    Status: ${statusText}
                                 </div>
                             </div>
                             <div class="file-actions">
                                 ${file.status !== 'expired' ? `
                                 <button class="action-btn download-btn" onclick="window.open('${file.shareUrl}', '_blank')">
-                                    ⬇️ Download
+                                    Download
                                 </button>
                                 <button class="action-btn copy-btn" onclick="copyUrl('${file.shareUrl}')">
-                                    📋 Copiar
+                                    Copiar
                                 </button>
-                                ` : '<span class="expired-text">Expirado</span>'}
+                                ` : ''}
                                 <button class="action-btn remove-btn" onclick="removeFile('${file.id}')">
-                                    🗑️
+                                    Remover
                                 </button>
                             </div>
                         </div>
@@ -621,37 +602,31 @@
         }
 
         function copyUrl(url) {
-            navigator.clipboard.writeText(url).then(function() {
+            navigator.clipboard.writeText(url).then(() => {
                 alert('Link copiado!');
-            }).catch(function() {
-                const textArea = document.createElement('textarea');
-                textArea.value = url;
-                document.body.appendChild(textArea);
-                textArea.select();
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                document.body.appendChild(textarea);
+                textarea.select();
                 document.execCommand('copy');
-                document.body.removeChild(textArea);
+                document.body.removeChild(textarea);
                 alert('Link copiado!');
             });
         }
 
         async function removeFile(fileId) {
-            if (confirm('Remover este arquivo da lista de compartilhamento?')) {
+            if (confirm('Remover este arquivo?')) {
                 try {
-                    const response = await fetch(`/files/${fileId}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (response.ok) {
-                        loadFiles();
-                    } else {
-                        alert('Erro ao remover arquivo');
-                    }
+                    await fetch(`/files/${fileId}`, { method: 'DELETE' });
+                    loadFiles();
                 } catch (error) {
                     alert('Erro ao remover arquivo');
                 }
             }
         }
 
+        // Load files on page load
         window.addEventListener('load', loadFiles);
     </script>
 </body>

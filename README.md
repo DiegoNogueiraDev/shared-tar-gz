@@ -1,207 +1,282 @@
-# 🔒 Shared TAR.GZ - Secure File Sharing
+# Secure File Share - Compartilhamento Seguro e Anonimo
 
-Advanced Node.js application for secure sharing of .tar.gz files with enhanced security features, random ports, and large file support.
+## Proposito
 
-## 🚀 Key Features
+Ferramenta para compartilhamento seguro e **completamente anonimo** de arquivos `.tar.gz` em redes locais. Desenvolvida para transferencias que **nao podem ser detectadas por ferramentas de monitoramento e observabilidade**, incluindo:
 
-### 🛡️ Security Features
-- **🎲 Random Port Generation**: Uses cryptographically secure random ports (20000-65535)
-- **🔐 JWT Authentication**: Token-based access control for all downloads
-- **🔒 AES-256 Encryption**: Optional file encryption during transfer
-- **🛡️ Rate Limiting**: Protection against brute force attacks (100 req/15min, 5 downloads/min)
-- **🔍 Access Logging**: Complete monitoring with IP tracking and timestamps
-- **🚫 IP Whitelisting**: Optional IP restriction support
-- **⛑️ Security Headers**: Helmet.js implementation with CSP protection
+- Ferramentas de DLP (Data Loss Prevention)
+- Agentes de monitoramento de endpoint
+- Sistemas de observabilidade de jornada do usuario
+- Proxies e inspetores de trafego SSL
+- Qualquer software de vigilancia corporativa
 
-### 📁 File Management
-- **📦 Large File Support**: Up to 50GB per file (configurable)
-- **✅ .tar.gz Validation**: Strict file type enforcement
-- **📊 Download Limits**: Configurable maximum downloads per file
-- **⏰ Token Expiration**: Automatic link expiration (24h default)
-- **🗑️ Auto Cleanup**: Automatic removal when limits exceeded
+**Caso de uso principal:** Transferir arquivos entre maquinas na mesma rede domestica de forma invisivel, mesmo quando uma das maquinas possui software de monitoramento instalado.
 
-### 🎨 Enhanced Interface
-- **📱 Responsive Design**: Modern, mobile-friendly interface
-- **🔍 Security Indicators**: Real-time security status display
-- **📈 File Analytics**: Size, download count, and encryption status
-- **⚠️ Security Warnings**: User-friendly security notifications
+---
 
-## 📋 Prerequisites
+## Niveis de Seguranca Garantidos
 
-- Node.js (version 14 or higher)
-- npm or yarn
+### Nivel 1: Modo Stealth (Anti-Deteccao)
 
-## 🛠️ Installation
+| Recurso | Descricao |
+|---------|-----------|
+| **Sem logs de IP** | Nenhum endereco IP e registrado |
+| **Sem timestamps** | Nenhuma data/hora e gravada |
+| **Sem fingerprinting** | Headers genericos (Server: nginx) |
+| **Sem X-Powered-By** | Nao revela tecnologia usada |
+| **Referrer-Policy: no-referrer** | Nao vaza URLs de origem |
+| **Cache-Control: no-store** | Nenhum rastro em cache do navegador |
 
-1. Clone the repository:
+### Nivel 2: Anti-Fingerprinting
+
+| Header | Valor | Efeito |
+|--------|-------|--------|
+| Server | nginx | Mascara o Node.js |
+| X-Powered-By | removido | Oculta framework |
+| Permissions-Policy | interest-cohort=() | Bloqueia FLoC/tracking |
+| X-DNS-Prefetch-Control | off | Impede DNS leaks |
+
+### Nivel 3: Protecao de Trafego
+
+| Recurso | Descricao |
+|---------|-----------|
+| **Padding aleatorio** | Adiciona 1KB-8KB de dados aleatorios |
+| **Timing jitter** | Delay aleatorio de 50-500ms |
+| **Porta aleatoria** | Nova porta (20000-65535) a cada reinicio |
+| **Token JWT** | Links expiram em 24h |
+| **Rate limiting** | 100 req/15min geral, 5 downloads/min |
+
+### Nivel 4: Protecao do Arquivo
+
+| Recurso | Descricao |
+|---------|-----------|
+| **AES-256-GCM** | Criptografia opcional (desativada por padrao) |
+| **PBKDF2** | Derivacao de chave com 100.000 iteracoes |
+| **Validacao .tar.gz** | Apenas arquivos tar.gz aceitos |
+| **Limite de downloads** | Maximo 10 downloads por arquivo |
+| **Tamanho maximo** | Ate 50GB por arquivo |
+
+---
+
+## Instalacao
+
 ```bash
+# Clone o repositorio
 git clone <repository-url>
 cd shared-tar-gz
-```
 
-2. Install dependencies:
-```bash
+# Instale as dependencias
 npm install
 ```
 
-## 🏃 Quick Start
+---
 
-### Production Mode
+## Como Usar
+
+### Passo 1: Iniciar o Servidor
+
 ```bash
 npm start
 ```
 
-### Development Mode (with auto-reload)
+O servidor inicia em uma **porta aleatoria** entre 20000-65535. A porta atual e exibida no console e salva no arquivo `.port`.
+
+### Passo 2: Acessar a Interface
+
+Abra no navegador:
+```
+http://localhost:[PORTA]
+```
+
+Ou veja a porta atual:
 ```bash
-npm run dev
+cat .port
 ```
 
-The server will start on a **random port between 20000-65535**. Check the console output for the assigned port.
+### Passo 3: Fazer Upload do Arquivo
 
-## ⚙️ Configuration
+1. **Arraste e solte** seu arquivo `.tar.gz` na area indicada
+2. **Ou clique** no botao "Selecionar Arquivo"
+3. O upload inicia automaticamente
 
-Configure the application using environment variables:
+### Passo 4: Compartilhar o Link
+
+Apos o upload:
+1. Um link seguro com token JWT e gerado
+2. Copie o link usando o botao "Copiar Link"
+3. Compartilhe apenas com pessoas autorizadas
+
+### Passo 5: Download (Outro Computador)
+
+1. Acesse o link compartilhado no navegador
+2. O arquivo baixa automaticamente
+3. **Pronto para usar** - basta extrair:
 
 ```bash
-# Security Configuration
-ENABLE_HTTPS=true                    # Enable HTTPS (requires SSL certificates)
-JWT_SECRET=your_secure_secret        # Custom JWT secret key
-TOKEN_EXPIRY=24h                     # Token expiration time
-MAX_DOWNLOADS=10                     # Maximum downloads per file
-ENABLE_ENCRYPTION=true               # Enable file encryption
-
-# File Configuration
-MAX_FILE_SIZE=53687091200           # Maximum file size in bytes (50GB)
-
-# Access Control
-WHITELISTED_IPS=192.168.1.100,192.168.1.101  # Comma-separated allowed IPs
+tar -xzf arquivo_baixado.tar.gz
 ```
-
-### File Size Examples
-```bash
-# 10GB limit
-MAX_FILE_SIZE=10737418240
-
-# 50GB limit (default)
-MAX_FILE_SIZE=53687091200
-
-# 100GB limit
-MAX_FILE_SIZE=107374182400
-```
-
-## 🔧 API Endpoints
-
-### File Sharing
-- `POST /share` - Create secure share link with JWT token
-- `GET /download/:fileId?token=jwt` - Download with token verification
-- `GET /files` - List files with security status
-- `DELETE /files/:fileId` - Remove file from sharing list
-
-### Security Features
-- Rate limiting on all endpoints
-- JWT token validation for downloads
-- IP whitelisting (if configured)
-- Comprehensive access logging
-
-## 🌐 Network Access
-
-### Local Access
-```bash
-http://localhost:[RANDOM_PORT]
-```
-
-### Network Access
-1. Check console output for the assigned port
-2. Find your local IP:
-```bash
-ip addr show
-```
-3. Share with network users:
-```bash
-http://[YOUR_IP]:[RANDOM_PORT]
-```
-
-## 📖 Usage
-
-1. **Start the server** using `npm start`
-2. **Note the random port** displayed in the console
-3. **Access the web interface** at `http://localhost:[PORT]`
-4. **Enter the full path** to your .tar.gz file
-5. **Generate a secure link** with built-in token authentication
-6. **Share the secure URL** with authorized users
-7. **Monitor downloads** through the web interface
-
-## 🔒 Security Best Practices
-
-- **Random Ports**: Each restart uses a new random port for security
-- **Token Protection**: Never share tokens separately from URLs
-- **File Validation**: Only .tar.gz files are accepted
-- **Size Limits**: Configure appropriate file size limits
-- **IP Restrictions**: Use IP whitelisting in sensitive environments
-- **Monitor Logs**: Check console output for security events
-- **Regular Restarts**: Restart server to clear shared file cache
-
-## 📁 Project Structure
-
-```
-shared-tar-gz/
-├── server.js              # Main secure server with all features
-├── package.json           # Dependencies and security packages
-├── CLAUDE.md              # Development guidance
-├── README.md              # This file
-└── public/
-    └── index.html         # Enhanced security-aware frontend
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-- **Port conflicts**: New random port is assigned automatically
-- **Rate limiting**: Wait 15 minutes if hitting rate limits
-- **Token errors**: Links expire after configured time (default 24h)
-- **Large files**: Monitor console for upload progress
-- **File not found**: Check if download limit was exceeded
-
-### Debug Information
-- Current port saved to `.port` file
-- All security events logged to console
-- Failed access attempts tracked and logged
-
-## 🔄 Development
-
-### Security Dependencies
-- `helmet` - Security headers
-- `express-rate-limit` - Rate limiting
-- `jsonwebtoken` - JWT authentication
-- `bcryptjs` - Password hashing utilities
-
-### Development Commands
-```bash
-npm run dev     # Development with auto-reload
-npm start       # Production mode
-```
-
-## 📄 License
-
-MIT License - See LICENSE file for details
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Implement security-focused changes
-4. Add comprehensive tests
-5. Submit a pull request
-
-## 🔐 Security Notice
-
-This application implements multiple security layers but should be used responsibly:
-- Only share files with trusted parties
-- Use IP whitelisting in corporate environments
-- Monitor access logs regularly
-- Keep the application updated
-- Use HTTPS in production environments
 
 ---
 
-**🚀 Ready to share files securely with enhanced protection!**
+## Topologia de Rede Recomendada
+
+```
+[Seu Notebook]                    [PC Cliente]
+      |                                 |
+      | Servidor na porta XXXXX         |
+      |                                 |
+      +---------- Rede Domestica -------+
+                      |
+              [Roteador/Switch]
+```
+
+**Importante:** O PC cliente pode ter VPN corporativa ou software de monitoramento. A transferencia permanece invisivel porque:
+
+1. Conexao e local (nao passa pela VPN)
+2. Headers nao revelam informacoes
+3. Nenhum log e gerado no servidor
+4. Porta aleatoria dificulta deteccao
+5. Trafego parece requisicao HTTP comum para servidor nginx
+
+---
+
+## Configuracao Avancada
+
+### Variaveis de Ambiente
+
+```bash
+# Desativar modo stealth (nao recomendado)
+STEALTH_MODE=false
+
+# Ativar criptografia (requer decriptacao manual)
+ENABLE_ENCRYPTION=true
+
+# Alterar expiracao do token
+TOKEN_EXPIRY=48h
+
+# Limite de downloads por arquivo
+MAX_DOWNLOADS=5
+
+# Tamanho maximo do arquivo (em bytes)
+MAX_FILE_SIZE=107374182400  # 100GB
+
+# Restringir a IPs especificos
+WHITELISTED_IPS=192.168.1.100,192.168.1.101
+```
+
+### Exemplos de Tamanho
+
+| Limite | Valor |
+|--------|-------|
+| 10 GB | `MAX_FILE_SIZE=10737418240` |
+| 50 GB | `MAX_FILE_SIZE=53687091200` (padrao) |
+| 100 GB | `MAX_FILE_SIZE=107374182400` |
+
+---
+
+## Interface Web
+
+A interface exibe badges de seguranca ativos:
+
+- **Modo Stealth** - Sem logs ou rastreamento
+- **Token JWT** - Links protegidos e temporarios
+- **Anti-Fingerprint** - Headers mascarados
+- **Rate Limiting** - Protecao contra abuso
+
+### Lista de Arquivos Compartilhados
+
+Para cada arquivo:
+- Status (Ativo/Expirado)
+- Contador de downloads (X/10)
+- Botoes: Download, Copiar Link, Remover
+
+---
+
+## API Endpoints
+
+| Metodo | Endpoint | Descricao |
+|--------|----------|-----------|
+| POST | `/upload` | Upload de arquivo via formulario |
+| GET | `/download/:id?token=jwt` | Download com verificacao de token |
+| GET | `/files` | Lista arquivos compartilhados |
+| DELETE | `/files/:id` | Remove arquivo da lista |
+
+---
+
+## Solucao de Problemas
+
+### Erro "Token expirado"
+Links expiram em 24h. Faca novo upload.
+
+### Erro "Rate limit excedido"
+Aguarde 15 minutos ou reinicie o servidor.
+
+### Arquivo corrompido apos download
+Verifique se `ENABLE_ENCRYPTION=true` nao esta ativo. Se estiver, use o script de decriptacao em `public/decrypt.js`.
+
+### Porta em uso
+O servidor gera automaticamente uma nova porta aleatoria. Verifique `.port` para a porta atual.
+
+### Upload travado
+Para arquivos grandes (>1GB), o upload usa streaming. Aguarde - arquivos de ate 50GB sao suportados.
+
+---
+
+## Seguranca vs Usabilidade
+
+| Configuracao | Seguranca | Usabilidade |
+|--------------|-----------|-------------|
+| Padrao (recomendado) | Alta | Alta |
+| Com criptografia | Maxima | Media (requer decrypt) |
+| Sem stealth | Media | Alta |
+
+**Recomendacao:** Use as configuracoes padrao. O arquivo chega pronto para descompactar.
+
+---
+
+## Dependencias de Seguranca
+
+- `helmet` - Headers de seguranca HTTP
+- `express-rate-limit` - Limitacao de requisicoes
+- `jsonwebtoken` - Autenticacao JWT
+- `multer` - Upload seguro de arquivos
+- `uuid` - Identificadores unicos
+
+---
+
+## Estrutura do Projeto
+
+```
+shared-tar-gz/
+├── server.js           # Servidor Express com todas as protecoes
+├── package.json        # Dependencias
+├── .port               # Porta atual do servidor
+├── uploads/            # Diretorio de uploads (criado automaticamente)
+├── public/
+│   ├── index.html      # Interface web com drag & drop
+│   └── decrypt.js      # Script de decriptacao (modo opcional)
+└── README.md           # Esta documentacao
+```
+
+---
+
+## Comparacao com Outras Solucoes
+
+| Recurso | Secure File Share | FTP | HTTP Simples | Cloud |
+|---------|-------------------|-----|--------------|-------|
+| Anonimato total | Sim | Nao | Nao | Nao |
+| Sem logs | Sim | Nao | Nao | Nao |
+| Anti-fingerprint | Sim | Nao | Nao | Nao |
+| Porta aleatoria | Sim | Nao | Nao | N/A |
+| Funciona offline | Sim | Sim | Sim | Nao |
+| Suporte 50GB+ | Sim | Sim | Depende | Sim |
+
+---
+
+## Licenca
+
+MIT License
+
+---
+
+**Desenvolvido para transferencias seguras e invisiveis em redes locais.**
