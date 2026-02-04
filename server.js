@@ -33,7 +33,7 @@ const CONFIG = {
     enableHttps: process.env.ENABLE_HTTPS === 'true' || false,
     tokenExpiry: process.env.TOKEN_EXPIRY || '24h',
     maxDownloads: process.env.MAX_DOWNLOADS ? parseInt(process.env.MAX_DOWNLOADS) : 10,
-    enableEncryption: process.env.ENABLE_ENCRYPTION !== 'false', // Default: true
+    enableEncryption: process.env.ENABLE_ENCRYPTION === 'true', // Default: false (arquivo chega pronto para usar)
     whitelistedIPs: process.env.WHITELISTED_IPS ? process.env.WHITELISTED_IPS.split(',') : [],
     // STEALTH MODE - Anti-observability settings
     stealthMode: process.env.STEALTH_MODE !== 'false', // Default: true
@@ -436,13 +436,19 @@ app.get('/download/:fileId', downloadLimiter, async (req, res) => {
     stealthLog(`📥 Download ${fileInfo.downloads}/${fileInfo.maxDownloads}`);
 
     // Headers seguros e anônimos para download
-    // Use generic filename in stealth mode
-    const downloadFilename = CONFIG.stealthMode
-        ? `download_${crypto.randomBytes(4).toString('hex')}.enc`
-        : fileInfo.fileName;
+    // Se criptografia desabilitada, usa nome original do arquivo
+    let downloadFilename;
+    if (CONFIG.enableEncryption) {
+        downloadFilename = CONFIG.stealthMode
+            ? `download_${crypto.randomBytes(4).toString('hex')}.enc`
+            : fileInfo.fileName + '.enc';
+    } else {
+        // Sem criptografia - arquivo chega pronto para usar
+        downloadFilename = path.basename(fileInfo.originalPath);
+    }
 
     res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
-    res.setHeader('Content-Type', 'application/octet-stream'); // Generic type
+    res.setHeader('Content-Type', CONFIG.enableEncryption ? 'application/octet-stream' : 'application/gzip');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
 
